@@ -38,11 +38,12 @@ class LogoutView(APIView):
         
 class ManageUserRoleView(APIView):
     permission_classes = [IsAdminUser]
-    def post(self, request, user_id):
+    def post(self, request):
         try:
-            user = User.objects.get(id=user_id)
+            username = request.data.get("username")
             action = request.data.get("action")
-            
+            user = User.objects.get(username=username)
+
             if action == "promote":
                 user.role = User.EVENT_MANAGER
                 user.save()
@@ -151,7 +152,7 @@ class BookTicketView(APIView):
 
     def post(self, request):
         event_id = request.data.get("event_id")
-        number_of_tickets = request.data.get("number_of_tickets")
+        number_of_tickets = int(request.data.get("number_of_tickets"))
 
         # If the event exists
         event = get_object_or_404(Event, id=event_id)
